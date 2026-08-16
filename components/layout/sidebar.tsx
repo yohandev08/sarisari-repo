@@ -1,62 +1,52 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  LayoutGrid,
-  Users,
-  Package,
-  ShoppingCart,
-  BookOpen,
-  Wallet,
-  Smartphone,
-  Store,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const nav = [
-  { href: "/", label: "Dashboard", icon: LayoutGrid },
-  { href: "/sales", label: "Sales / POS", icon: ShoppingCart },
-  { href: "/products", label: "Products", icon: Package },
-  { href: "/customers", label: "Customers", icon: Users },
-  { href: "/utang", label: "Utang Ledger", icon: BookOpen },
-  { href: "/payments", label: "Payments", icon: Wallet },
-  { href: "/digital-services", label: "Digital Services", icon: Smartphone },
-];
+import Link from 'next/link';
 
 export default function Sidebar() {
-  const pathname = usePathname();
-
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-primary-dark bg-primary md:flex">
-      <div className="flex items-center gap-2 px-5 py-5">
-        <Store className="text-marigold" size={24} />
-        <span className="font-display text-lg font-semibold text-white">
-          Tindahan
-        </span>
+    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 min-h-screen">
+      <div>
+        {/* Brand */}
+        <div className="flex items-center gap-3 px-3 py-4 border-b border-slate-800 mb-6">
+          <div className="bg-emerald-500 text-white p-2 rounded-lg font-bold">
+            🏠
+          </div>
+          <span className="font-bold text-lg text-white">Tindahan</span>
+        </div>
+
+        {/* Links */}
+        <nav className="space-y-1">
+          <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600 text-white font-medium">
+            Dashboard
+          </Link>
+          <Link href="/sales" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Sales / POS
+          </Link>
+          <Link href="/products" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Products
+          </Link>
+          <Link href="/customers" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Customers
+          </Link>
+          <Link href="/utang" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Utang Ledger
+          </Link>
+          <Link href="/payments" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Payments
+          </Link>
+          <Link href="/digital-services" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            Digital Services
+          </Link>
+        </nav>
       </div>
-      <nav className="flex-1 space-y-1 px-3">
-        {nav.map(({ href, label, icon: Icon }) => {
-          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex items-center gap-3 rounded-card px-3 py-2.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary-dark text-white"
-                  : "text-white/75 hover:bg-primary-dark/60 hover:text-white"
-              )}
-            >
-              <Icon size={18} />
-              {label}
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="px-5 py-4 text-xs text-white/50">
-        Sari-sari Store Management
+
+      {/* User Footer */}
+      <div className="pt-4 border-t border-slate-800 flex items-center gap-3 px-2">
+        <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+          N
+        </div>
+        <div className="text-xs">
+          <p className="font-semibold text-white">Sari-Sari Store</p>
+          <p className="text-slate-500">Management</p>
+        </div>
       </div>
     </aside>
   );

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { TrendingUp, PackageX, BookOpen, Smartphone, AlertCircle } from "lucide-react";
+import { TrendingUp, PackageX, BookOpen, Smartphone, AlertCircle, ShoppingBag, ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Badge, statusTone } from "@/components/ui/badge";
@@ -44,31 +44,32 @@ export default function DashboardPage() {
     .slice(0, 6);
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-8">
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          icon={<TrendingUp size={18} />}
+          icon={<TrendingUp size={20} />}
           label="Today's sales"
           value={formatPeso(todaysTotal)}
           tone="primary"
           hint={`${todaysSales.length} transaction${todaysSales.length === 1 ? "" : "s"}`}
         />
         <StatCard
-          icon={<BookOpen size={18} />}
+          icon={<BookOpen size={20} />}
           label="Outstanding utang"
           value={formatPeso(outstandingUtang)}
           tone="utang"
           hint={overdueCount > 0 ? `${overdueCount} overdue` : "None overdue"}
         />
         <StatCard
-          icon={<PackageX size={18} />}
+          icon={<PackageX size={20} />}
           label="Low stock items"
           value={String(lowStock.length)}
           tone="marigold"
           hint="At or below reorder level"
         />
         <StatCard
-          icon={<Smartphone size={18} />}
+          icon={<Smartphone size={20} />}
           label="Products tracked"
           value={String(products.length)}
           tone="paid"
@@ -76,35 +77,40 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Content Layout Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent sales</CardTitle>
+        {/* Recent Sales Table */}
+        <Card className="lg:col-span-2 shadow-sm border border-border/80">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4">
+            <CardTitle className="text-base font-semibold text-ink">Recent Sales</CardTitle>
+            <Link href="/sales" className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+              View POS <ArrowUpRight size={14} />
+            </Link>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             {recentSales.length === 0 ? (
-              <EmptyRow text="No sales recorded yet. Ring one up from the POS screen." />
+              <EmptyState text="No sales recorded yet. Ring one up from the POS screen." />
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Sale</TableHead>
-                    <TableHead>When</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                  <TableRow className="border-border/60">
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-ink-soft">Sale ID</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-ink-soft">When</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-ink-soft">Payment</TableHead>
+                    <TableHead className="text-right text-xs font-semibold uppercase tracking-wider text-ink-soft">Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentSales.map((s) => (
-                    <TableRow key={s.sale_id}>
-                      <TableCell className="font-mono text-xs">{s.sale_id}</TableCell>
-                      <TableCell>{formatDateTime(s.created_at)}</TableCell>
+                    <TableRow key={s.sale_id} className="hover:bg-ledger/50 transition-colors">
+                      <TableCell className="font-mono text-xs font-medium text-ink">{s.sale_id}</TableCell>
+                      <TableCell className="text-xs text-ink-soft">{formatDateTime(s.created_at)}</TableCell>
                       <TableCell>
                         <Badge tone={s.payment_type === "utang" ? "utang" : "primary"}>
                           {s.payment_type}
                         </Badge>
                       </TableCell>
-                      <TableCell className="figures text-right font-mono">
+                      <TableCell className="figures text-right font-mono font-semibold text-ink">
                         {formatPeso(s.total_amount)}
                       </TableCell>
                     </TableRow>
@@ -115,19 +121,20 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Reorder soon</CardTitle>
+        {/* Reorder Soon Panel */}
+        <Card className="shadow-sm border border-border/80">
+          <CardHeader className="border-b border-border/40 pb-4">
+            <CardTitle className="text-base font-semibold text-ink">Reorder Soon</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="pt-4 space-y-3">
             {lowStock.length === 0 ? (
-              <EmptyRow text="Stock levels look healthy." />
+              <EmptyState text="Stock levels look healthy." />
             ) : (
               lowStock.slice(0, 6).map((p) => (
                 <Link
                   key={p.product_id}
                   href="/products"
-                  className="flex items-center justify-between rounded-card border border-border p-3 text-sm hover:bg-ledger"
+                  className="flex items-center justify-between rounded-xl border border-border/80 p-3 text-sm hover:border-primary/40 hover:bg-ledger/40 transition"
                 >
                   <div>
                     <div className="font-medium text-ink">{p.product_name}</div>
@@ -165,36 +172,44 @@ function StatCard({
   }[tone];
 
   return (
-    <Card>
-      <CardContent className="pt-5">
+    <Card className="shadow-sm hover:shadow-md transition border border-border/80">
+      <CardContent className="p-5">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink-soft">{label}</span>
-          <span className={`rounded-full p-1.5 ${toneBg}`}>{icon}</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ink-soft">{label}</span>
+          <span className={`rounded-lg p-2 ${toneBg}`}>{icon}</span>
         </div>
-        <div className="figures mt-2 font-mono text-2xl font-semibold text-ink">{value}</div>
-        <div className="mt-1 text-xs text-ink-soft">{hint}</div>
+        <div className="figures mt-3 font-mono text-2xl font-bold text-ink">{value}</div>
+        <div className="mt-1 text-xs text-ink-soft font-medium">{hint}</div>
       </CardContent>
     </Card>
   );
 }
 
-function EmptyRow({ text }: { text: string }) {
-  return <p className="py-6 text-center text-sm text-ink-soft">{text}</p>;
-}
-
-function LoadingState() {
-  return <p className="text-sm text-ink-soft">Loading store data…</p>;
-}
-
-function ErrorState({ message }: { message: string }) {
+function EmptyState({ text }: { text: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-card border border-utang-light bg-utang-light/40 p-4 text-sm text-utang-dark">
-      <AlertCircle size={18} className="mt-0.5 shrink-0" />
-      <div>
-        <p className="font-medium">Couldn't load dashboard data.</p>
-        <p className="mt-1">{message}</p>
-      </div>
+    <div className="my-6 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/60 py-10 px-4 text-center">
+      <p className="text-sm text-ink-soft">{text}</p>
     </div>
   );
 }
 
+function LoadingState() {
+  return (
+    <div className="flex items-center justify-center py-20 text-sm font-medium text-ink-soft">
+      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mr-3"></div>
+      Loading store data…
+    </div>
+  );
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-utang-light bg-utang-light/40 p-4 text-sm text-utang-dark shadow-sm">
+      <AlertCircle size={20} className="mt-0.5 shrink-0 text-utang-dark" />
+      <div>
+        <p className="font-semibold">Couldn't load dashboard data.</p>
+        <p className="mt-1 text-xs">{message}</p>
+      </div>
+    </div>
+  );
+}

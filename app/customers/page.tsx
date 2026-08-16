@@ -35,6 +35,11 @@ export default function CustomersPage() {
     `${c.first_name} ${c.last_name}`.toLowerCase().includes(query.toLowerCase())
   );
 
+  
+const [isHovered, setisHovered] = React.useState(false)
+
+
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -47,7 +52,12 @@ export default function CustomersPage() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <Button onClick={() => setOpen(true)}>
+        
+        <Button onClick={() => setOpen(true)}
+          
+          onMouseEnter={() => setisHovered(true)}
+          onMouseLeave={() => setisHovered(false)}
+          style={{ backgroundColor: isHovered ? '#2563eb' : '#3b82f6' }}>
           <Plus size={16} /> Add customer
         </Button>
       </div>
